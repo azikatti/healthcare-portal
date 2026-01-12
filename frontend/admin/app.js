@@ -175,9 +175,11 @@ async function handleIngest() {
             // Update extracted data fields if available
             if (data.data.address) {
                 document.getElementById('extracted-address').textContent = data.data.address;
+                currentDoctor.address = data.data.address;
             }
             if (data.data.phone) {
                 document.getElementById('extracted-phone').textContent = data.data.phone;
+                currentDoctor.phone = data.data.phone;
             }
             if (data.data.city) {
                 document.getElementById('doctor-city').value = data.data.city;
@@ -187,13 +189,36 @@ async function handleIngest() {
             }
             if (data.data.business_hours) {
                 currentDoctor.business_hours = data.data.business_hours;
-                updatePreview();
+            }
+            if (data.data.name && !document.getElementById('doctor-name').value.trim()) {
+                document.getElementById('doctor-name').value = data.data.name;
+                currentDoctor.name = data.data.name;
             }
             
-            showSuccess('URL processed successfully! ' + (data.data.note || ''));
+            // Update preview
             updatePreview();
+            
+            showSuccess('Data extracted successfully from Google Maps!');
         } else {
-            showError(data.error || 'Failed to process URL');
+            // Even if not fully successful, try to use partial data
+            if (data.data) {
+                if (data.data.address) {
+                    document.getElementById('extracted-address').textContent = data.data.address;
+                    currentDoctor.address = data.data.address;
+                }
+                if (data.data.phone) {
+                    document.getElementById('extracted-phone').textContent = data.data.phone;
+                    currentDoctor.phone = data.data.phone;
+                }
+                if (data.data.city) {
+                    document.getElementById('doctor-city').value = data.data.city;
+                }
+                if (data.data.postal_code) {
+                    document.getElementById('doctor-postal-code').value = data.data.postal_code;
+                }
+                updatePreview();
+            }
+            showError(data.error || 'Failed to extract data. Some fields may have been populated.');
         }
     } catch (error) {
         console.error('Error ingesting maps data:', error);
