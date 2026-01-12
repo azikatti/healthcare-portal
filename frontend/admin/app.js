@@ -33,6 +33,18 @@ function setupEventListeners() {
         updatePreview();
     });
     
+    // Address input
+    document.getElementById('extracted-address').addEventListener('input', (e) => {
+        currentDoctor.address = e.target.value;
+        updatePreview();
+    });
+    
+    // Phone input
+    document.getElementById('extracted-phone').addEventListener('input', (e) => {
+        currentDoctor.phone = e.target.value;
+        updatePreview();
+    });
+    
     // Specialty input
     const specialtyInput = document.getElementById('specialty-input');
     specialtyInput.addEventListener('keypress', (e) => {
@@ -70,9 +82,6 @@ function setupEventListeners() {
             removeLanguage(language);
         }
     });
-    
-    // Ingest button
-    document.getElementById('ingest-btn').addEventListener('click', handleIngest);
     
     // Save button
     document.getElementById('save-btn').addEventListener('click', handleSave);
@@ -147,88 +156,6 @@ function updatePreview() {
     document.getElementById('preview-phone').textContent = currentDoctor.phone;
 }
 
-// Handle ingest
-async function handleIngest() {
-    const mapsUrl = document.getElementById('maps-url').value.trim();
-    if (!mapsUrl) {
-        showError('Please enter a Google Maps URL');
-        return;
-    }
-    
-    const ingestBtn = document.getElementById('ingest-btn');
-    const originalText = ingestBtn.innerHTML;
-    ingestBtn.disabled = true;
-    ingestBtn.innerHTML = '<span>⏳</span> Processing...';
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}/admin/ingest-maps`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ url: mapsUrl })
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok && data.success) {
-            // Update extracted data fields if available
-            if (data.data.address) {
-                document.getElementById('extracted-address').textContent = data.data.address;
-                currentDoctor.address = data.data.address;
-            }
-            if (data.data.phone) {
-                document.getElementById('extracted-phone').textContent = data.data.phone;
-                currentDoctor.phone = data.data.phone;
-            }
-            if (data.data.city) {
-                document.getElementById('doctor-city').value = data.data.city;
-            }
-            if (data.data.postal_code) {
-                document.getElementById('doctor-postal-code').value = data.data.postal_code;
-            }
-            if (data.data.business_hours) {
-                currentDoctor.business_hours = data.data.business_hours;
-            }
-            if (data.data.name && !document.getElementById('doctor-name').value.trim()) {
-                document.getElementById('doctor-name').value = data.data.name;
-                currentDoctor.name = data.data.name;
-            }
-            
-            // Update preview
-            updatePreview();
-            
-            showSuccess('Data extracted successfully from Google Maps!');
-        } else {
-            // Even if not fully successful, try to use partial data
-            if (data.data) {
-                if (data.data.address) {
-                    document.getElementById('extracted-address').textContent = data.data.address;
-                    currentDoctor.address = data.data.address;
-                }
-                if (data.data.phone) {
-                    document.getElementById('extracted-phone').textContent = data.data.phone;
-                    currentDoctor.phone = data.data.phone;
-                }
-                if (data.data.city) {
-                    document.getElementById('doctor-city').value = data.data.city;
-                }
-                if (data.data.postal_code) {
-                    document.getElementById('doctor-postal-code').value = data.data.postal_code;
-                }
-                updatePreview();
-            }
-            showError(data.error || 'Failed to extract data. Some fields may have been populated.');
-        }
-    } catch (error) {
-        console.error('Error ingesting maps data:', error);
-        showError('Error ingesting data. Please try again.');
-    } finally {
-        ingestBtn.disabled = false;
-        ingestBtn.innerHTML = originalText;
-    }
-}
-
 // Handle save
 async function handleSave() {
     // Validate required fields
@@ -248,7 +175,7 @@ async function handleSave() {
         return;
     }
     
-    const address = document.getElementById('extracted-address').textContent.trim();
+    const address = document.getElementById('extracted-address').value.trim();
     if (!address) {
         showError('Address is required');
         return;
@@ -262,9 +189,8 @@ async function handleSave() {
         city: document.getElementById('doctor-city').value.trim() || 'Berlin',
         postal_code: document.getElementById('doctor-postal-code').value.trim() || '',
         country: document.getElementById('doctor-country').value.trim() || 'Germany',
-        phone: document.getElementById('extracted-phone').textContent.trim() || null,
-        business_hours: currentDoctor.business_hours,
-        google_maps_url: document.getElementById('maps-url').value.trim() || null
+        phone: document.getElementById('extracted-phone').value.trim() || null,
+        business_hours: currentDoctor.business_hours
     };
     
     const saveBtn = document.getElementById('save-btn');
@@ -346,6 +272,8 @@ function handleDiscard() {
         document.getElementById('doctor-city').value = 'Berlin';
         document.getElementById('doctor-postal-code').value = '10117';
         document.getElementById('doctor-country').value = 'Germany';
+        document.getElementById('extracted-address').value = '123 Medical Plaza, Downtown Health District, NY 10001';
+        document.getElementById('extracted-phone').value = '+1 (555) 098-7654';
         currentDoctor = {
             name: 'Dr. Jane Smith',
             specialties: ['Cardiology', 'Pediatrics'],

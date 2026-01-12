@@ -14,7 +14,6 @@ A comprehensive healthcare portal system for finding and managing Azerbaijani do
 
 ### Admin Dashboard
 - Add/Edit/Delete practitioner profiles
-- Google Maps URL ingestion for automated data extraction
 - Real-time profile preview
 - SEO metadata management
 
@@ -99,7 +98,6 @@ SECRET_KEY=your_secret_key_here
 - `POST /api/admin/doctors` - Create new doctor
 - `PUT /api/admin/doctors/<id>` - Update doctor
 - `DELETE /api/admin/doctors/<id>` - Delete doctor
-- `POST /api/admin/ingest-maps` - Ingest data from Google Maps URL
 
 ## Sample Data
 

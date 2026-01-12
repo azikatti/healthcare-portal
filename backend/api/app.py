@@ -6,7 +6,6 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from backend.models.doctor import Doctor, Base
 from backend.utils.validation import validate_doctor_data, parse_address
-from backend.utils.maps_scraper import scrape_google_maps
 from sqlalchemy import create_engine, or_
 from sqlalchemy.orm import sessionmaker
 from geopy.distance import geodesic
@@ -270,66 +269,6 @@ def delete_doctor(doctor_id):
         return jsonify({'error': str(e)}), 500
     finally:
         session.close()
-
-
-@app.route('/api/admin/ingest-maps', methods=['POST'])
-def ingest_maps():
-    """Ingest data from Google Maps URL using web scraping."""
-    data = request.get_json()
-    maps_url = data.get('url', '').strip()
-    
-    if not maps_url:
-        return jsonify({'error': 'URL is required'}), 400
-    
-    if not maps_url.startswith(('http://', 'https://')):
-        return jsonify({'error': 'Invalid URL format'}), 400
-    
-    if 'maps.google.com' not in maps_url and 'goo.gl' not in maps_url and 'maps.app.goo.gl' not in maps_url:
-        return jsonify({'error': 'Please provide a valid Google Maps URL'}), 400
-    
-    try:
-        # Scrape with human-like delays (this will take 3-6 seconds)
-        scraped_data = scrape_google_maps(maps_url)
-        
-        if scraped_data.get('success'):
-            return jsonify({
-                'success': True,
-                'data': {
-                    'address': scraped_data.get('address'),
-                    'phone': scraped_data.get('phone'),
-                    'website': scraped_data.get('website'),
-                    'business_hours': scraped_data.get('business_hours'),
-                    'latitude': scraped_data.get('latitude'),
-                    'longitude': scraped_data.get('longitude'),
-                    'city': scraped_data.get('city'),
-                    'postal_code': scraped_data.get('postal_code'),
-                    'country': scraped_data.get('country', 'Germany'),
-                    'name': scraped_data.get('name'),
-                    'rating': scraped_data.get('rating'),
-                    'review_count': scraped_data.get('review_count'),
-                },
-                'url': maps_url
-            }), 200
-        else:
-            # Return partial data even if not fully successful
-            return jsonify({
-                'success': False,
-                'error': scraped_data.get('error', 'Failed to scrape data'),
-                'data': {
-                    'address': scraped_data.get('address'),
-                    'phone': scraped_data.get('phone'),
-                    'city': scraped_data.get('city'),
-                    'postal_code': scraped_data.get('postal_code'),
-                    'latitude': scraped_data.get('latitude'),
-                    'longitude': scraped_data.get('longitude'),
-                }
-            }), 200
-    
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': f'Scraping error: {str(e)}'
-        }), 500
 
 
 if __name__ == '__main__':
