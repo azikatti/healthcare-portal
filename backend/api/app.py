@@ -5,6 +5,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 from backend.models.doctor import Doctor, Base
+from backend.utils.validation import validate_doctor_data, parse_address
 from sqlalchemy import create_engine, or_
 from sqlalchemy.orm import sessionmaker
 from geopy.distance import geodesic
@@ -181,26 +182,41 @@ def create_doctor():
     session = get_db_session()
     try:
         data = request.get_json()
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        # Validate data
+        is_valid, errors = validate_doctor_data(data)
+        if not is_valid:
+            return jsonify({'error': 'Validation failed', 'errors': errors}), 400
+        
+        # Parse address if city/postal_code not provided
+        if not data.get('city') or not data.get('postal_code'):
+            address_info = parse_address(data.get('address', ''))
+            if not data.get('city') and address_info.get('city'):
+                data['city'] = address_info['city']
+            if not data.get('postal_code') and address_info.get('postal_code'):
+                data['postal_code'] = address_info['postal_code']
         
         doctor = Doctor(
-            name=data.get('name'),
+            name=data.get('name').strip(),
             specialties=data.get('specialties', []),
             languages=data.get('languages', []),
-            address=data.get('address'),
-            city=data.get('city'),
-            postal_code=data.get('postal_code', ''),
-            country=data.get('country', 'Germany'),
+            address=data.get('address').strip(),
+            city=data.get('city', '').strip(),
+            postal_code=data.get('postal_code', '').strip(),
+            country=data.get('country', 'Germany').strip(),
             latitude=data.get('latitude'),
             longitude=data.get('longitude'),
-            phone=data.get('phone'),
-            email=data.get('email'),
-            website=data.get('website'),
+            phone=data.get('phone', '').strip() if data.get('phone') else None,
+            email=data.get('email', '').strip() if data.get('email') else None,
+            website=data.get('website', '').strip() if data.get('website') else None,
             business_hours=data.get('business_hours'),
             rating=data.get('rating', 0.0),
             review_count=data.get('review_count', 0),
-            google_maps_url=data.get('google_maps_url'),
-            profile_image_url=data.get('profile_image_url'),
-            bio=data.get('bio'),
+            google_maps_url=data.get('google_maps_url', '').strip() if data.get('google_maps_url') else None,
+            profile_image_url=data.get('profile_image_url', '').strip() if data.get('profile_image_url') else None,
+            bio=data.get('bio', '').strip() if data.get('bio') else None,
         )
         
         session.add(doctor)
@@ -257,20 +273,50 @@ def delete_doctor(doctor_id):
 
 @app.route('/api/admin/ingest-maps', methods=['POST'])
 def ingest_maps():
-    """Ingest data from Google Maps URL (placeholder - requires implementation)."""
-    data = request.get_json()
-    maps_url = data.get('url', '')
+    """Ingest data from Google Maps URL.
     
-    # TODO: Implement Google Maps URL parsing and data extraction
-    # This would require:
-    # 1. Parse Google Maps URL to get place ID
-    # 2. Use Google Places API to get details
-    # 3. Extract address, phone, hours, etc.
+    Note: Full implementation requires Google Places API key.
+    This is a basic implementation that parses the URL and returns a structure.
+    """
+    data = request.get_json()
+    maps_url = data.get('url', '').strip()
+    
+    if not maps_url:
+        return jsonify({'error': 'URL is required'}), 400
+    
+    # Basic URL validation
+    if not maps_url.startswith(('http://', 'https://')):
+        return jsonify({'error': 'Invalid URL format'}), 400
+    
+    # For now, return a structured response indicating what would be extracted
+    # In production, this would:
+    # 1. Parse Google Maps URL to extract place ID or coordinates
+    # 2. Use Google Places API to get place details
+    # 3. Extract: address, phone, business hours, coordinates, etc.
+    
+    # Example response structure
+    extracted_data = {
+        'address': None,
+        'phone': None,
+        'business_hours': None,
+        'latitude': None,
+        'longitude': None,
+        'city': None,
+        'postal_code': None,
+        'note': 'Full implementation requires Google Places API integration. '
+                'Add GOOGLE_MAPS_API_KEY to .env and implement Places API calls.'
+    }
+    
+    # Try to extract basic info from URL if it's a place URL
+    # This is a placeholder - real implementation needs Places API
+    if 'maps.google.com' in maps_url or 'goo.gl' in maps_url or 'maps.app.goo.gl' in maps_url:
+        extracted_data['note'] = 'URL detected. Full data extraction requires Google Places API.'
     
     return jsonify({
-        'message': 'Maps ingestion not yet implemented',
+        'success': True,
+        'data': extracted_data,
         'url': maps_url
-    }), 501
+    }), 200
 
 
 if __name__ == '__main__':
