@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:5001/api';
 
 // State
 let currentDoctor = {
@@ -185,6 +185,9 @@ async function handleSave() {
         specialties: currentDoctor.specialties,
         languages: currentDoctor.languages,
         address: document.getElementById('extracted-address').textContent,
+        city: document.getElementById('doctor-city').value || 'Berlin',
+        postal_code: document.getElementById('doctor-postal-code').value || '',
+        country: document.getElementById('doctor-country').value || 'Germany',
         phone: document.getElementById('extracted-phone').textContent,
         business_hours: currentDoctor.business_hours,
         google_maps_url: document.getElementById('maps-url').value
@@ -218,6 +221,9 @@ function handleDiscard() {
     if (confirm('Are you sure you want to discard changes?')) {
         // Reset form
         document.getElementById('doctor-name').value = 'Dr. Jane Smith';
+        document.getElementById('doctor-city').value = 'Berlin';
+        document.getElementById('doctor-postal-code').value = '10117';
+        document.getElementById('doctor-country').value = 'Germany';
         currentDoctor = {
             name: 'Dr. Jane Smith',
             specialties: ['Cardiology', 'Pediatrics'],

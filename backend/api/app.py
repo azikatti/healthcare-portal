@@ -3,10 +3,9 @@
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from backend.models.doctor import Doctor, Base
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, or_
 from sqlalchemy.orm import sessionmaker
 from geopy.distance import geodesic
 
@@ -17,8 +16,6 @@ CORS(app)
 
 # Database configuration
 database_url = os.getenv('DATABASE_URL', 'sqlite:///database/healthcare.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Create database directory if it doesn't exist
 db_path = database_url.replace('sqlite:///', '')
@@ -74,8 +71,10 @@ def get_doctors():
         
         if search:
             query = query.filter(
-                Doctor.name.ilike(f'%{search}%') |
-                Doctor.address.ilike(f'%{search}%')
+                or_(
+                    Doctor.name.ilike(f'%{search}%'),
+                    Doctor.address.ilike(f'%{search}%')
+                )
             )
         
         doctors = query.all()
@@ -275,5 +274,5 @@ def ingest_maps():
 
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 5000))
+    port = int(os.getenv('PORT', 5001))
     app.run(host='0.0.0.0', port=port, debug=True)
