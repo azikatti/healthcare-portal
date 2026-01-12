@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediAdmin - Add New Practitioner</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">+</span>
+                    <span class="logo-text">MediAdmin<br>HEALTHCARE MGMT</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="#" class="nav-item active">
+                    <span>👨‍⚕️</span> Doctor Directory
+                </a>
+                <a href="#" class="nav-item">
+                    <span>📈</span> Reports
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">👤</div>
+                    <div>
+                        <div class="user-name">Admin User</div>
+                        <div class="user-email">admin@clinic.org</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                <!-- Breadcrumbs -->
+                <div class="breadcrumbs">
+                    Directory > Add Practitioner
+                </div>
+
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div>
+                        <h1>Add New Practitioner</h1>
+                        <p class="subtitle">Manual entry with Google Maps data ingestion.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" id="discard-btn">Discard</button>
+                        <button class="btn btn-primary" id="save-btn">Save Profile</button>
+                    </div>
+                </div>
+
+                <div class="content-layout">
+                    <!-- Form Section -->
+                    <div class="form-section">
+                        <!-- Doctor Details -->
+                        <section class="form-group">
+                            <div class="section-header">
+                                <span class="section-icon">✏️</span>
+                                <h2>Doctor Details</h2>
+                            </div>
+                            
+                            <div class="form-field">
+                                <label>Doctor's Name</label>
+                                <input type="text" id="doctor-name" class="form-input" placeholder="Dr. Jane Smith" value="Dr. Jane Smith">
+                            </div>
+
+                            <div class="form-field">
+                                <label>Specialities</label>
+                                <div class="tags-input" id="specialties-input">
+                                    <span class="tag">Cardiology <span class="tag-remove">×</span></span>
+                                    <span class="tag">Pediatrics <span class="tag-remove">×</span></span>
+                                    <input type="text" class="tag-input" placeholder="Add more..." id="specialty-input">
+                                </div>
+                            </div>
+
+                            <div class="form-field">
+                                <label>Languages</label>
+                                <div class="tags-input" id="languages-input">
+                                    <span class="tag">Azerbaijani <span class="tag-remove">×</span></span>
+                                    <input type="text" class="tag-input" placeholder="Add languages..." id="language-input">
+                                </div>
+                            </div>
+
+                            <div class="form-field">
+                                <label>Google Maps URL</label>
+                                <div class="input-with-button">
+                                    <input type="url" id="maps-url" class="form-input" 
+                                           placeholder="https://maps.app.goo.gl/example" 
+                                           value="https://maps.app.goo.gl/example">
+                                    <button class="btn btn-primary" id="ingest-btn">
+                                        <span>⚙️</span> Ingest
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Automated Data Extraction -->
+                        <section class="form-group">
+                            <div class="section-header">
+                                <h2>Automated Data Extraction</h2>
+                                <span class="status-badge ready">• READY</span>
+                            </div>
+                            
+                            <div class="extracted-data">
+                                <div class="data-item">
+                                    <label>Verified Address</label>
+                                    <div class="data-value" id="extracted-address">
+                                        123 Medical Plaza, Downtown Health District, NY 10001
+                                    </div>
+                                </div>
+                                
+                                <div class="data-item">
+                                    <label>Phone Number</label>
+                                    <div class="data-value" id="extracted-phone">
+                                        +1 (555) 098-7654
+                                    </div>
+                                </div>
+                                
+                                <div class="data-item">
+                                    <label>Business Hours</label>
+                                    <div class="hours-display" id="extracted-hours">
+                                        <div class="hours-row">MON-FRI: 08:00 - 18:00</div>
+                                        <div class="hours-row">SAT: 09:00 - 14:00</div>
+                                        <div class="hours-row">SUN: Closed <span class="calendar-icon">📅</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Preview Section -->
+                    <aside class="preview-section">
+                        <div class="preview-header">
+                            <span class="preview-icon">👁️</span>
+                            <h2>PUBLIC PROFILE PREVIEW</h2>
+                        </div>
+                        
+                        <div class="preview-card">
+                            <div class="preview-header-image">
+                                <div class="preview-avatar">🏥</div>
+                            </div>
+                            
+                            <div class="preview-content">
+                                <h3 id="preview-name">Dr. Jane Smith</h3>
+                                <div class="preview-tags" id="preview-specialties">
+                                    <span class="preview-tag">CARDIOLOGY</span>
+                                    <span class="preview-tag">PEDIATRICS</span>
+                                </div>
+                                
+                                <div class="preview-details">
+                                    <div class="preview-detail-item">
+                                        <span>🌐</span>
+                                        <span id="preview-languages">Azerbaijani</span>
+                                    </div>
+                                    <div class="preview-detail-item">
+                                        <span>📍</span>
+                                        <span id="preview-address">123 Medical Plaza, NY 10001</span>
+                                    </div>
+                                    <div class="preview-detail-item">
+                                        <span>📞</span>
+                                        <span id="preview-phone">+1 (555) 098-7654</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="preview-map">
+                                    <div class="map-placeholder">
+                                        <div class="map-label">MAP VIEW</div>
+                                        <div class="map-content">🗺️</div>
+                                    </div>
+                                </div>
+                                
+                                <button class="btn btn-primary preview-maps-btn">
+                                    📍 OPEN IN GOOGLE MAPS
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="pro-tip">
+                            <span class="tip-icon">💡</span>
+                            <span>Pro-tip: Ingesting from Maps automatically fills SEO metadata for the public profile page.</span>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

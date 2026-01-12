@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthCare Portal - Azerbaijani Doctors in Germany</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">+</span>
+                    <span class="logo-text">HealthCare Portal</span>
+                </div>
+                <nav class="nav">
+                    <a href="#" class="nav-link active">Find Doctors</a>
+                    <a href="#" class="nav-link">Services</a>
+                    <a href="#" class="nav-link">Hospitals</a>
+                </nav>
+                <div class="header-actions">
+                    <input type="text" class="search-input" placeholder="Search conditions...">
+                    <button class="btn btn-primary">Sign In</button>
+                    <div class="user-icon">👤</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Breadcrumbs -->
+            <div class="breadcrumbs">
+                <a href="#">Home</a> > <span>Search Results</span>
+            </div>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1 id="results-count">142 Doctors found near you</h1>
+                    <p class="subtitle">Azerbaijani doctors in Germany</p>
+                </div>
+                <div class="sort-controls">
+                    <label>Sort by:</label>
+                    <select id="sort-by" class="sort-select">
+                        <option value="distance">Distance</option>
+                        <option value="rating">Rating</option>
+                        <option value="name">Name</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="content-layout">
+                <!-- Sidebar Filters -->
+                <aside class="sidebar">
+                    <div class="filters">
+                        <div class="filters-header">
+                            <h2>Filters</h2>
+                            <a href="#" class="reset-link" id="reset-filters">Reset All</a>
+                        </div>
+
+                        <!-- Location Filter -->
+                        <div class="filter-group">
+                            <label class="filter-label">Location</label>
+                            <div class="location-input-wrapper">
+                                <input type="text" id="location-input" class="location-input" placeholder="Enter city..." value="Germany">
+                                <span class="map-icon">📍</span>
+                            </div>
+                        </div>
+
+                        <!-- Specialties Filter -->
+                        <div class="filter-group">
+                            <label class="filter-label">Specialties</label>
+                            <div class="checkbox-group" id="specialties-filter">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Languages Filter -->
+                        <div class="filter-group">
+                            <label class="filter-label">Languages</label>
+                            <div class="checkbox-group" id="languages-filter">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Main Content Area -->
+                <div class="main-content">
+                    <div id="doctors-list" class="doctors-list">
+                        <!-- Doctors will be loaded here -->
+                        <div class="loading">Loading doctors...</div>
+                    </div>
+                    <button id="load-more" class="btn btn-secondary load-more-btn" style="display: none;">
+                        Load More Doctors
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">
+                    <span class="logo-icon">+</span>
+                    <span class="logo-text">HealthCare Portal</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Help Center</a>
+                </div>
+                <div class="copyright">
+                    © 2024 HealthCare Portal. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
